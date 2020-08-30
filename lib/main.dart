@@ -14,6 +14,26 @@ Future<Book> getBookById() async {
   }
 }
 
+Future<Book> createBook(String title, String author, int year) async {
+  final http.Response response = await http.post(
+    'http://localhost:8888/books',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'title': title,
+      'author': author,
+      'year': year,
+    }),
+  );
+
+  if (response.statusCode == 201) {
+    return Book.fromJson(json.decode(response.body));
+  } else {
+    throw Exception('Failed to create book');
+  }
+}
+
 class Book {
   final int id;
   final String title;
@@ -43,36 +63,84 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final TextEditingController _controller = TextEditingController();
   Future<Book> futureBook;
 
-  @override
-  void initState() {
-    super.initState();
-    futureBook = getBookById();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   futureBook = getBookById();
+  // }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MaterialApp(
+  //       title: 'Get Book Example',
+  //       theme: ThemeData(
+  //         primarySwatch: Colors.blue,
+  //       ),
+  //       home: Scaffold(
+  //           appBar: AppBar(
+  //             title: Text('Get Book Example'),
+  //           ),
+  //           body: Center(
+  //             child: FutureBuilder<Book>(
+  //                 future: futureBook,
+  //                 builder: (context, snapshot) {
+  //                   if (snapshot.hasData) {
+  //                     return Text(snapshot.data.title);
+  //                   } else if (snapshot.hasError) {
+  //                     return Text("${snapshot.error}");
+  //                   }
+  //                   return CircularProgressIndicator();
+  //                 }),
+  //           )));
+  // }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Get Book Example',
+        title: 'Create Book Example',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
         home: Scaffold(
             appBar: AppBar(
-              title: Text('Get Book Example'),
+              title: Text('Create Book Example'),
             ),
-            body: Center(
-              child: FutureBuilder<Book>(
-                  future: futureBook,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Text(snapshot.data.title);
-                    } else if (snapshot.hasError) {
-                      return Text("${snapshot.error}");
-                    }
-                    return CircularProgressIndicator();
-                  }),
-            )));
+            body: Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(8.0),
+                child: (futureBook == null)
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          TextField(
+                            controller: _controller,
+                            decoration:
+                                InputDecoration(hintText: 'Enter Title'),
+                          ),
+                          RaisedButton(
+                            child: Text('Create Book'),
+                            onPressed: () {
+                              setState(() {
+                                futureBook =
+                                    createBook(_controller.text, 'Egan', 2000);
+                              });
+                            },
+                          )
+                        ],
+                      )
+                    : FutureBuilder<Book>(
+                        future: futureBook,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(snapshot.data.title);
+                          } else if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
+                          }
+                          return CircularProgressIndicator();
+                        },
+                      ))));
   }
 }

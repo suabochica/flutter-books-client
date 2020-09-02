@@ -12,6 +12,6 @@ class MyBookApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false, home: CreateBookScreen());
+        debugShowCheckedModeBanner: false, home: DeleteBookScreen());
   }
 }

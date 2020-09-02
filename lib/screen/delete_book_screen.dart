@@ -13,7 +13,15 @@ class DeleteBookScreen extends StatefulWidget {
 
 class _DeleteBookScreen extends State<DeleteBookScreen> {
   final BookClient _bookClient = BookClient();
+
   Future<Book> _futureBook;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureBook = _bookClient.getBookById();
+  }
+
   // DELETE Render
   Widget build(BuildContext context) {
     return MaterialApp(

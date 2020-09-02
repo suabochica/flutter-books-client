@@ -22,7 +22,7 @@ class BookClient {
   }
 
   Future<Book> getBookById() async {
-    final response = await http.get('http://localhost:8888/books/2');
+    final response = await http.get('http://localhost:8888/books/4');
 
     if (response.statusCode == 200) {
       return Book.fromJson(json.decode(response.body));
@@ -91,7 +91,7 @@ class BookClient {
 
   Future<Book> deleteBook(String id) async {
     final http.Response response = await http.delete(
-      'http://localhost:8888/books/2',
+      'http://localhost:8888/books/$id',
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
